@@ -189,6 +189,12 @@ func add_barriers(vals, dirs, cost=0):
 	for coords in vals:
 		coords = HexCell.new(coords).axial_coords
 		var barriers = {}
+		if coords in path_barriers:
+			# Already something there
+			barriers = path_barriers[coords]
+		else:
+			path_barriers[coords] = barriers
+		# Set or override the given dirs
 		for dir in dirs:
 			barriers[dir] = cost
 		path_barriers[coords] = barriers
@@ -229,7 +235,7 @@ func get_move_cost(from, to):
 	if cost == 0:
 		return 0
 	# Check for barriers
-	var direction = to - from
+	var direction = HexCell.new(to - from).cube_coords
 	var barrier_cost
 	if from in path_barriers and direction in path_barriers[from]:
 		barrier_cost = path_barriers[from][direction]

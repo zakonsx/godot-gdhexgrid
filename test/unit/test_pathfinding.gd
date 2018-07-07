@@ -140,14 +140,9 @@ func test_move_cost_barrier_backside():
 	# The destination has a barrier
 	grid.add_barriers(Vector2(0, 1), HexCell.DIR_S)
 	assert_eq(grid.get_move_cost(Vector2(0, 0), Vector2(0, 1)), 0)
-func test_move_cost_barrier_cumulative():
-	# Barriers add their difficulties together
-	grid.add_barriers(Vector2(0, 0), HexCell.DIR_N, 1)
-	grid.add_barriers(Vector2(0, 1), HexCell.DIR_S, 2)
-	assert_eq(grid.get_move_cost(Vector2(0, 0), Vector2(0, 1)), 0.3)
 func test_move_cost_cumulative():
 	# Test that moving adds up hex and barrier values
-	# But NOT for the *starting* hex!
+	# But NOT from the *starting* hex!
 	grid.add_obstacles(Vector2(0, 0), 1)
 	grid.add_obstacles(Vector2(0, 1), 2)
 	grid.add_barriers(Vector2(0, 0), HexCell.DIR_N, 4)
@@ -221,11 +216,11 @@ func test_walls():
 	]
 	check_path(grid.get_path(a_pos, g_pos), path)
 	
-func test_cliffs():
+func test_slopes():
 	# Test that we *can* walk through *some* walls
 	# A barrier which is passable, but not worth our hex
 	grid.add_barriers(g_pos, HexCell.DIR_NE, 3)
-	# A barrier which is marginally better than moving an extra hex
+	# A barrier which is marginally better than moving that extra hex
 	grid.add_barriers(g_pos, HexCell.DIR_N, grid.path_cost_default - 0.1)
 	var path = [
 		a_pos,
