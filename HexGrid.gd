@@ -66,7 +66,7 @@
 		The given coordinates (axial or cube), HexCell instance, or array thereof,
 		will be removed as obstacles from the path-finding grid.
 		
-	#### func get_cost(coords)
+	#### func get_hex_cost(coords)
 	
 		Returns the movement cost of the specified grid position.
 	
@@ -106,6 +106,10 @@ var hex_transform_inv
 # Pathfinding obstacles {Vector2: cost}
 # A zero cost means impassable
 var path_obstacles = {}
+# Barriers restrict traversing between edges (in either direction)
+# costs for barriers and obstacles are cumulative, but impassable is impassable
+# {Vector2: {DIR_VECTOR2: cost, ...}}
+var path_barriers = {}
 var path_bounds = Rect2()
 var path_cost_default = 1.0
 
@@ -173,7 +177,37 @@ func remove_obstacles(vals):
 		coords = HexCell.new(coords).axial_coords
 		path_obstacles.erase(coords)
 	
-func get_cost(coords):
+func get_barriers():
+	return path_barriers
+	
+func add_barriers(vals, dirs, cost=0):
+	# Store the given directions of the given locations as barriers
+	if not typeof(vals) == TYPE_ARRAY:
+		vals = [vals]
+	if not typeof(dirs) == TYPE_ARRAY:
+		dirs = [dirs]
+	for coords in vals:
+		coords = HexCell.new(coords).axial_coords
+		var barriers = {}
+		for dir in dirs:
+			barriers[dir] = cost
+		path_barriers[coords] = barriers
+	
+func remove_barriers(vals, dirs=null):
+	if not typeof(vals) == TYPE_ARRAY:
+		vals = [vals]
+	if dirs != null and not typeof(dirs) == TYPE_ARRAY:
+		dirs = [dirs]
+	for coords in vals:
+		coords = HexCell.new(coords).axial_coords
+		if dirs == null:
+			path_barriers.erase(coords)
+		else:
+			for dir in dirs:
+				path_barriers[coords].erase(dir)
+	
+
+func get_hex_cost(coords):
 	# Returns the cost of moving to the given hex
 	coords = HexCell.new(coords).axial_coords
 	if coords in path_obstacles:
@@ -183,7 +217,33 @@ func get_cost(coords):
 		return 0
 	return path_cost_default
 	
+func get_move_cost(from, to):
+	# Returns the cost of moving from one hex to a neighbour
+	from = HexCell.new(from).axial_coords
+	to = HexCell.new(to).axial_coords
+	# First check if either end is completely impassable
+	var cost = get_hex_cost(from)
+	if cost == 0:
+		return 0
+	cost = get_hex_cost(to)
+	if cost == 0:
+		return 0
+	# Check for barriers
+	var direction = to - from
+	var barrier_cost
+	if from in path_barriers and direction in path_barriers[from]:
+		barrier_cost = path_barriers[from][direction]
+		if barrier_cost == 0:
+			return 0
+		cost += barrier_cost
+	if to in path_barriers and -direction in path_barriers[to]:
+		barrier_cost = path_barriers[to][-direction]
+		if barrier_cost == 0:
+			return 0
+		cost += barrier_cost
+	return cost
 	
+
 func get_path(start, goal, exceptions=[]):
 	# Light a starry path from the start to the goal, inclusive
 	start = HexCell.new(start).axial_coords
@@ -203,14 +263,14 @@ func get_path(start, goal, exceptions=[]):
 			break
 		for next_hex in HexCell.new(current).get_all_adjacent():
 			var next = next_hex.axial_coords
-			var next_cost = get_cost(next)
+			var next_cost = get_move_cost(current, next)
+			if next == goal and (next in exceptions or get_hex_cost(next) == 0):
+				# Our goal is an obstacle, but we're next to it
+				# so our work here is done
+				came_from[next] = current
+				frontier.clear()
+				break
 			if not next_cost or next in exceptions:
-				if next == goal:
-					# Our goal is an obstacle, but we're next to it
-					# so our work here is done
-					came_from[next] = current
-					frontier.clear()
-					break
 				# We shall not pass
 				continue
 			next_cost += cost_so_far[current]
