@@ -51,7 +51,7 @@
 		The keys are Vector2s of the axial coordinates, the values will be the
 		cost value. Zero cost means an impassable obstacle.
 	
-	#### func add_obstacles(vals, cost=0)
+	#### func add_obstacles(coords, cost=0)
 	
 		Adds one or more obstacles to the path-finding grid
 		
@@ -59,12 +59,40 @@
 		will be added as path-finding obstacles with the given cost. A zero cost
 		indicates an impassable obstacle.
 	
-	#### func remove_obstacles(vals)
+	#### func remove_obstacles(coords)
 	
 		Removes one or more obstacles from the path-finding grid
 		
 		The given coordinates (axial or cube), HexCell instance, or array thereof,
 		will be removed as obstacles from the path-finding grid.
+	
+	#### func get_barriers()
+	
+		Returns a dict of all barriers in the grid.
+		
+		The outer dict is a mapping of axial coords to an inner barrier dict.
+		The inner dict maps between HexCell.DIR_* directions and the cost of
+		travel in that direction. A cost of zero indicates an impassable barrier.
+	
+	#### func add_barriers(coords, dirs, cost=0)
+	
+		Adds one or more barriers to locations on the grid.
+		
+		The given coordinates (axial or cube), HexCell instance, or array thereof,
+		will have path-finding barriers added in the given HexCell.DIR_* directions
+		with the given cost. A zero cost indicates an impassable obstacle.
+		
+		Existing barriers at given coordinates will not be removed, but will be
+		overridden if the direction is specified.
+	
+	#### func remove_barriers(coords, dirs=null)
+	
+		Remove one or more barriers from the path-finding grid.
+		
+		The given coordinates (axial or cube), HexCell instance, or array thereof,
+		will have the path-finding barriers in the supplied HexCell.DIR_* directions
+		removed. If no direction is specified, all barriers for the given
+		coordinates will be removed.
 	
 	#### func get_hex_cost(coords)
 	
@@ -76,10 +104,10 @@
 	
 		Returns the cost of moving from one hex to an adjacent one.
 		
-		This method takes into account any barriers defined between
-		the two hexes, as well as the cost of the target hex.
-		Will return 0 if the target hex is inaccessible, or if there
-		is an impassable barrier between the hexes.
+		This method takes into account any barriers defined between the two
+		hexes, as well as the cost of the target hex.
+		Will return 0 if the target hex is inaccessible, or if there is an
+		impassable barrier between the hexes.
 		
 		The direction should be provided as one of the HexCell.DIR_* values.
 	
