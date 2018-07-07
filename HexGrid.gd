@@ -65,10 +65,23 @@
 		
 		The given coordinates (axial or cube), HexCell instance, or array thereof,
 		will be removed as obstacles from the path-finding grid.
-		
+	
 	#### func get_hex_cost(coords)
 	
-		Returns the movement cost of the specified grid position.
+		Returns the cost of moving into the specified grid position.
+		
+		Will return 0 if the given grid position is inaccessible.
+	
+	#### func get_move_cost(coords, direction)
+	
+		Returns the cost of moving from one hex to an adjacent one.
+		
+		This method takes into account any barriers defined between
+		the two hexes, as well as the cost of the target hex.
+		Will return 0 if the target hex is inaccessible, or if there
+		is an impassable barrier between the hexes.
+		
+		The direction should be provided as one of the HexCell.DIR_* values.
 	
 	#### func get_path(start, goal, exceptions=[])
 	
@@ -223,27 +236,29 @@ func get_hex_cost(coords):
 		return 0
 	return path_cost_default
 	
-func get_move_cost(from, to):
+func get_move_cost(coords, direction):
 	# Returns the cost of moving from one hex to a neighbour
-	from = HexCell.new(from).axial_coords
-	to = HexCell.new(to).axial_coords
+	direction = HexCell.new(direction).cube_coords
+	var start_hex = HexCell.new(coords)
+	var target_hex = HexCell.new(start_hex.cube_coords + direction)
+	coords = start_hex.axial_coords
 	# First check if either end is completely impassable
-	var cost = get_hex_cost(from)
+	var cost = get_hex_cost(start_hex)
 	if cost == 0:
 		return 0
-	cost = get_hex_cost(to)
+	cost = get_hex_cost(target_hex)
 	if cost == 0:
 		return 0
 	# Check for barriers
-	var direction = HexCell.new(to - from).cube_coords
 	var barrier_cost
-	if from in path_barriers and direction in path_barriers[from]:
-		barrier_cost = path_barriers[from][direction]
+	if coords in path_barriers and direction in path_barriers[coords]:
+		barrier_cost = path_barriers[coords][direction]
 		if barrier_cost == 0:
 			return 0
 		cost += barrier_cost
-	if to in path_barriers and -direction in path_barriers[to]:
-		barrier_cost = path_barriers[to][-direction]
+	var target_coords = target_hex.axial_coords
+	if target_coords in path_barriers and -direction in path_barriers[target_coords]:
+		barrier_cost = path_barriers[target_coords][-direction]
 		if barrier_cost == 0:
 			return 0
 		cost += barrier_cost
@@ -269,7 +284,7 @@ func get_path(start, goal, exceptions=[]):
 			break
 		for next_hex in HexCell.new(current).get_all_adjacent():
 			var next = next_hex.axial_coords
-			var next_cost = get_move_cost(current, next)
+			var next_cost = get_move_cost(current, next - current)
 			if next == goal and (next in exceptions or get_hex_cost(next) == 0):
 				# Our goal is an obstacle, but we're next to it
 				# so our work here is done

@@ -131,15 +131,15 @@ func test_hex_costs():
 	
 func test_move_costs():
 	# Test that more than just hex costs are at work
-	assert_eq(grid.get_move_cost(Vector2(0, 0), Vector2(0, 1)), grid.path_cost_default)
+	assert_eq(grid.get_move_cost(Vector2(0, 0), HexCell.DIR_N), grid.path_cost_default)
 func test_move_cost_barrier():
 	# Put up a barrier
 	grid.add_barriers(Vector2(0, 0), HexCell.DIR_N)
-	assert_eq(grid.get_move_cost(Vector2(0, 0), Vector2(0, 1)), 0)
+	assert_eq(grid.get_move_cost(Vector2(0, 0), HexCell.DIR_N), 0)
 func test_move_cost_barrier_backside():
 	# The destination has a barrier
 	grid.add_barriers(Vector2(0, 1), HexCell.DIR_S)
-	assert_eq(grid.get_move_cost(Vector2(0, 0), Vector2(0, 1)), 0)
+	assert_eq(grid.get_move_cost(Vector2(0, 0), HexCell.DIR_N), 0)
 func test_move_cost_cumulative():
 	# Test that moving adds up hex and barrier values
 	# But NOT from the *starting* hex!
@@ -147,7 +147,7 @@ func test_move_cost_cumulative():
 	grid.add_obstacles(Vector2(0, 1), 2)
 	grid.add_barriers(Vector2(0, 0), HexCell.DIR_N, 4)
 	grid.add_barriers(Vector2(0, 1), HexCell.DIR_S, 8)
-	assert_eq(grid.get_move_cost(Vector2(0, 0), Vector2(0, 1)), 14)
+	assert_eq(grid.get_move_cost(Vector2(0, 0), HexCell.DIR_N), 14)
 	
 
 func check_path(got, expected):
