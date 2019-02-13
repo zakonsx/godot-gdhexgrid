@@ -3,7 +3,7 @@ extends Node2D
 
 var HexGrid = preload("./HexGrid.gd").new()
 
-onready var baseHexPack = preload("res://tiles/base_hex_50.tscn")
+onready var baseHexPack = preload("res://tiles/BaseHex.tscn")
 
 onready var highlight = get_node("Highlight")
 onready var area_coords = get_node("Highlight/AreaCoords")
@@ -21,7 +21,7 @@ func _unhandled_input(event):
 			area_coords.text = str(relative_pos)
 		if hex_coords != null:
 			hex_coords.text = str(HexGrid.get_hex_at(relative_pos).axial_coords)
-		
+
 		# Snap the highlight to the nearest grid cell
 		if highlight != null:
 			highlight.position = HexGrid.get_hex_center(HexGrid.get_hex_at(relative_pos))
@@ -35,9 +35,9 @@ func gridDrawMap():
 	self.add_child(zero_cell_poly)
 	# Get ring from zero cell with radius 1
 	var ring_cells = zero_cell.get_ring(1)
+	var _poly
 	for _cell in ring_cells:
-		var _poly = baseHexPack.instance()
-		_poly.transform = Transform2D(0, HexGrid.get_hex_center(_cell))
-		self.add_child(_poly)
-		
-	
+		_poly = baseHexPack.instance()
+		_poly.pos_to(HexGrid.get_hex_center(_cell))
+		add_child(_poly)
+
