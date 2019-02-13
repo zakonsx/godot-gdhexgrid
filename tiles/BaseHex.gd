@@ -1,6 +1,6 @@
 extends Node2D
 
-onready var HexPoly = get_node("HexPoly")
+onready var HexNode = get_node("InitialHex")
 
 var _currentPos = Vector2(0, 0)
 
@@ -8,7 +8,7 @@ func pos_to(_pos):
 	_currentPos = _pos
 
 func _ready():
-	HexPoly.transform = Transform2D(0, _currentPos)
+	HexNode.transform = Transform2D(0, _currentPos)
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
 	pass
