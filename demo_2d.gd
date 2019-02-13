@@ -3,16 +3,19 @@ extends Node2D
 
 var HexGrid = preload("./HexGrid.gd").new()
 
-onready var polyHexPacked = preload("./HexBasePoly.tscn")
+onready var baseHexPack = preload("res://tiles/base_hex_50.tscn")
+
 onready var highlight = get_node("Highlight")
 onready var area_coords = get_node("Highlight/AreaCoords")
 onready var hex_coords = get_node("Highlight/HexCoords")
 
 func _ready():
 	HexGrid.hex_scale = Vector2(50, 50)
-	var polyHex = polyHexPacked.instance()
-	polyHex.transform = Transform2D(0.0, Vector2(100, 100))
-	self.add_child(polyHex)
+	# Grid zero cell
+	var zero_cell = HexGrid.HexCell.new(Vector2(0, 0))
+	var zero_cell_poly = baseHexPack.instance()
+	zero_cell_poly.transform = Transform2D(0,  HexGrid.get_hex_center(zero_cell))
+	self.add_child(zero_cell_poly)
 
 func _unhandled_input(event):
 	if event.position:
