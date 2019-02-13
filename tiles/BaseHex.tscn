@@ -1,6 +1,33 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://tiles/BaseHex.gd" type="Script" id=1]
+
+[sub_resource type="Shader" id=1]
+
+code = "shader_type canvas_item;
+
+uniform float brightness = 1.0;
+uniform float contrast = 1.0;
+uniform float saturation = 1.0;
+
+void fragment() {
+        vec3 c = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0).rgb;
+
+        c.rgb = mix(vec3(0.0), c.rgb, brightness);
+        c.rgb = mix(vec3(0.5), c.rgb, contrast);
+        c.rgb = mix(vec3(dot(vec3(1.0), c.rgb)*0.33333), c.rgb, saturation);
+
+        COLOR.rgb = c;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+
+render_priority = 0
+shader = SubResource( 1 )
+shader_param/brightness = 0.5
+shader_param/contrast = 1.0
+shader_param/saturation = 0.75
+_sections_unfolded = [ "shader_param" ]
 
 [node name="BaseHex" type="Node2D" index="0"]
 
@@ -18,19 +45,20 @@ bounce = 0.0
 
 [node name="HexPoly" type="Polygon2D" parent="InitialHex" index="0"]
 
+material = SubResource( 2 )
 polygon = PoolVector2Array( -12.5, 21.6506, 12.5, 21.6506, 25, 0, 12.5, -21.6506, -12.5, -21.6506, -25, 0 )
 uv = PoolVector2Array(  )
-color = Color( 0.0200806, 0.367188, 0, 1 )
+color = Color( 1, 1, 1, 1 )
 vertex_colors = PoolColorArray(  )
 offset = Vector2( 0, 0 )
 antialiased = false
 texture = null
-texture_offset = Vector2( 22, 18 )
-texture_scale = Vector2( 9, 9 )
+texture_offset = Vector2( 0, 0 )
+texture_scale = Vector2( 1, 1 )
 texture_rotation_degrees = 0.0
 invert_enable = false
 invert_border = 100.0
-_sections_unfolded = [ "Texture", "Transform" ]
+_sections_unfolded = [ "Material", "Texture", "Transform" ]
 
 [node name="HexCollisionPoly" type="CollisionPolygon2D" parent="InitialHex" index="1"]
 
