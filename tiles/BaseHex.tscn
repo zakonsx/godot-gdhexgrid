@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://tiles/BaseHex.gd" type="Script" id=1]
-[ext_resource path="res://tiles/textures/base_hex_50x50_brown.png" type="Texture" id=2]
+[ext_resource path="res://tiles/textures/base_hex_50x50_black_inner.png" type="Texture" id=2]
 
 [sub_resource type="Shader" id=1]
 
@@ -30,7 +30,7 @@ shader_param/contrast = 1.0
 shader_param/saturation = 0.75
 _sections_unfolded = [ "shader_param" ]
 
-[node name="BaseHex" type="Node2D" index="0"]
+[node name="BaseHex" type="Node2D"]
 
 script = ExtResource( 1 )
 
