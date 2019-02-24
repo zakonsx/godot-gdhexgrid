@@ -29,10 +29,10 @@ shape = SubResource( 1 )
 
 [node name="Highlight" type="Polygon2D" parent="Area2D" index="1"]
 
-editor/display_folded = true
+z_index = 100
 polygon = PoolVector2Array( -12.5, 21.6506, 12.5, 21.6506, 25, 0, 12.5, -21.6506, -12.5, -21.6506, -25, 0 )
 uv = PoolVector2Array(  )
-color = Color( 1, 1, 1, 1 )
+color = Color( 0.765625, 0, 0, 0.497255 )
 vertex_colors = PoolColorArray(  )
 offset = Vector2( 0, 0 )
 antialiased = false
@@ -42,7 +42,7 @@ texture_scale = Vector2( 1, 1 )
 texture_rotation_degrees = 0.0
 invert_enable = false
 invert_border = 100.0
-_sections_unfolded = [ "Transform" ]
+_sections_unfolded = [ "Transform", "Z Index" ]
 
 [node name="Label" type="Label" parent="Area2D/Highlight" index="0"]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://tiles/BaseHex.gd" type="Script" id=1]
-[ext_resource path="res://tiles/textures/base_hex_50x50_black_inner.png" type="Texture" id=2]
+[ext_resource path="res://tiles/textures/base_hex_50x50_rounded.png" type="Texture" id=2]
 
 [sub_resource type="Shader" id=1]
 
