@@ -29,6 +29,7 @@ shape = SubResource( 1 )
 
 [node name="Highlight" type="Polygon2D" parent="Area2D" index="1"]
 
+editor/display_folded = true
 z_index = 100
 polygon = PoolVector2Array( -12.5, 21.6506, 12.5, 21.6506, 25, 0, 12.5, -21.6506, -12.5, -21.6506, -25, 0 )
 uv = PoolVector2Array(  )

@@ -3,6 +3,8 @@ extends Node2D
 
 var HexGrid = preload("./HexGrid.gd").new()
 
+const HexTypes = preload("./tiles/BaseHex.gd").HexTypes
+
 onready var baseHexPack = preload("res://tiles/BaseHex.tscn")
 
 onready var highlight = get_node("Highlight")
@@ -34,11 +36,19 @@ func gridDrawMap():
 	zero_cell_poly.transform = Transform2D(0, HexGrid.get_hex_center(zero_cell))
 	self.add_child(zero_cell_poly)
 	# Get ring from zero cell with radius 1
-	for i in range(1,4):
+	for i in range(1,6):
 		var ring_cells = zero_cell.get_ring(i)
 		var _poly
 		for _cell in ring_cells:
 			_poly = baseHexPack.instance()
+			_poly.set_type(HexTypes.BASIC)
 			_poly.pos_to(HexGrid.get_hex_center(_cell))
 			add_child(_poly)
-
+	# Flood obstacles
+	var ring_obstacles = zero_cell.get_ring(5)
+	var _poly
+	for _cell in ring_obstacles:
+		_poly = baseHexPack.instance()
+		_poly.set_type(HexTypes.OBSTACLE)
+		_poly.pos_to(HexGrid.get_hex_center(_cell))
+		add_child(_poly)

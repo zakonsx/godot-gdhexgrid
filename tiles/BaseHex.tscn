@@ -1,34 +1,59 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://tiles/BaseHex.gd" type="Script" id=1]
 [ext_resource path="res://tiles/textures/base_hex_50x50_rounded.png" type="Texture" id=2]
+[ext_resource path="res://tiles/textures/base_hex_50x50_brown.png" type="Texture" id=3]
 
-[sub_resource type="Shader" id=1]
+[sub_resource type="Gradient" id=1]
 
-code = "shader_type canvas_item;
+offsets = PoolRealArray( 0, 0.131313, 0.510101, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 0.230576, 0.686668, 0.808594, 1, 0.109482, 0.347116, 0.800781, 1, 1, 1, 1, 0.320431 )
 
-uniform float brightness = 1.0;
-uniform float contrast = 1.0;
-uniform float saturation = 1.0;
+[sub_resource type="GradientTexture" id=2]
 
-void fragment() {
-        vec3 c = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0).rgb;
+flags = 4
+gradient = SubResource( 1 )
+width = 2048
 
-        c.rgb = mix(vec3(0.0), c.rgb, brightness);
-        c.rgb = mix(vec3(0.5), c.rgb, contrast);
-        c.rgb = mix(vec3(dot(vec3(1.0), c.rgb)*0.33333), c.rgb, saturation);
-
-        COLOR.rgb = c;
-}"
-
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ParticlesMaterial" id=3]
 
 render_priority = 0
-shader = SubResource( 1 )
-shader_param/brightness = 0.5
-shader_param/contrast = 1.0
-shader_param/saturation = 0.75
-_sections_unfolded = [ "shader_param" ]
+trail_divisor = 1
+emission_shape = 1
+emission_sphere_radius = 10.0
+flag_align_y = false
+flag_rotate_y = false
+flag_disable_z = true
+spread = 180.0
+flatness = 1.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 10.0
+initial_velocity_random = 1.0
+angular_velocity = 25.0
+angular_velocity_random = 0.0
+orbit_velocity = 0.5
+orbit_velocity_random = 1.0
+linear_accel = 0.0
+linear_accel_random = 0.0
+radial_accel = 0.0
+radial_accel_random = 0.0
+tangential_accel = 10.0
+tangential_accel_random = 0.0
+damping = 1.0
+damping_random = 0.0
+angle = 0.0
+angle_random = 0.0
+scale = 3.0
+scale_random = 0.0
+color_ramp = SubResource( 2 )
+hue_variation = 0.0
+hue_variation_random = 0.0
+anim_speed = 0.0
+anim_speed_random = 0.0
+anim_offset = 0.0
+anim_offset_random = 0.0
+anim_loop = false
+_sections_unfolded = [ "Angular Velocity", "Color", "Damping", "Emission Shape", "Gravity", "Initial Velocity", "Orbit Velocity", "Scale", "Spread", "Tangential Accel", "Trail" ]
 
 [node name="BaseHex" type="Node2D"]
 
@@ -36,6 +61,28 @@ script = ExtResource( 1 )
 
 [node name="InitialHex" type="StaticBody2D" parent="." index="0"]
 
+editor/display_folded = true
+input_pickable = false
+collision_layer = 1
+collision_mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+_sections_unfolded = [ "Z Index" ]
+
+[node name="HexCollisionPoly" type="CollisionPolygon2D" parent="InitialHex" index="0"]
+
+build_mode = 0
+polygon = PoolVector2Array( -12.5, 21.6506, 12.5, 21.6506, 25, 0, 12.5, -21.6506, -12.5, -21.6506, -25, 0 )
+
+[node name="Sprite" type="Sprite" parent="InitialHex" index="1"]
+
+texture = ExtResource( 2 )
+
+[node name="ObstacleHex" type="StaticBody2D" parent="." index="1"]
+
+z_index = 100
 input_pickable = false
 collision_layer = 1
 collision_mask = 1
@@ -44,31 +91,35 @@ constant_angular_velocity = 0.0
 friction = 1.0
 bounce = 0.0
 
-[node name="HexPoly" type="Polygon2D" parent="InitialHex" index="0"]
-
-visible = false
-material = SubResource( 2 )
-polygon = PoolVector2Array( -12.5, 21.6506, 12.5, 21.6506, 25, 0, 12.5, -21.6506, -12.5, -21.6506, -25, 0 )
-uv = PoolVector2Array(  )
-color = Color( 1, 1, 1, 1 )
-vertex_colors = PoolColorArray(  )
-offset = Vector2( 0, 0 )
-antialiased = false
-texture = null
-texture_offset = Vector2( 0, 0 )
-texture_scale = Vector2( 1, 1 )
-texture_rotation_degrees = 0.0
-invert_enable = false
-invert_border = 100.0
-_sections_unfolded = [ "Material", "Texture", "Transform" ]
-
-[node name="HexCollisionPoly" type="CollisionPolygon2D" parent="InitialHex" index="1"]
+[node name="HexObstaclePoly" type="CollisionPolygon2D" parent="ObstacleHex" index="0"]
 
 build_mode = 0
-polygon = PoolVector2Array( -12.5, 21.6506, 12.5, 21.6506, 25, 0, 12.5, -21.6506, -12.5, -21.6506, -25, 0 )
+polygon = PoolVector2Array( -24.839, -0.19244, -12.2782, -21.5458, 12.2154, -21.4412, 24.9855, -0.297115, 12.006, 21.1609, -11.8595, 21.1609 )
 
-[node name="Sprite" type="Sprite" parent="InitialHex" index="2"]
+[node name="Sprite" type="Sprite" parent="ObstacleHex" index="1"]
 
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
+
+[node name="Particles2D" type="Particles2D" parent="ObstacleHex" index="2"]
+
+emitting = true
+amount = 50
+lifetime = 0.75
+one_shot = false
+preprocess = 0.0
+speed_scale = 0.65
+explosiveness = 0.25
+randomness = 1.0
+fixed_fps = 0
+fract_delta = true
+visibility_rect = Rect2( -100, -100, 200, 200 )
+local_coords = true
+draw_order = 0
+process_material = SubResource( 3 )
+texture = null
+normal_map = null
+h_frames = 1
+v_frames = 1
+_sections_unfolded = [ "Drawing", "Process Material", "Time" ]
 
 
