@@ -36,7 +36,7 @@ func gridDrawMap():
 	zero_cell_poly.transform = Transform2D(0, HexGrid.get_hex_center(zero_cell))
 	self.add_child(zero_cell_poly)
 	# Get ring from zero cell with radius 1
-	for i in range(1,6):
+	for i in range(1,5):
 		var ring_cells = zero_cell.get_ring(i)
 		var _poly
 		for _cell in ring_cells:
@@ -44,11 +44,11 @@ func gridDrawMap():
 			_poly.set_type(HexTypes.BASIC)
 			_poly.pos_to(HexGrid.get_hex_center(_cell))
 			add_child(_poly)
-	# Flood obstacles
-	var ring_obstacles = zero_cell.get_ring(5)
+	# Flood energy cells
+	var ring_energy = zero_cell.get_ring(5)
 	var _poly
-	for _cell in ring_obstacles:
+	for _cell in ring_energy:
 		_poly = baseHexPack.instance()
-		_poly.set_type(HexTypes.OBSTACLE)
+		_poly.set_type(HexTypes.ENERGY)
 		_poly.pos_to(HexGrid.get_hex_center(_cell))
 		add_child(_poly)
